@@ -42,7 +42,7 @@ parse_git_branch()
 }
 
 # User prompt \u + \w
-PS1="$(tput bold)$(tput setaf 7)\u@$(tput setaf 6){\W}\[\e[91m\]@\$(tput setaf 1)$(parse_git_branch)$(tput sgr0)-->";
+PS1="$(tput bold)$(tput setaf 7)\u@$(tput setaf 6){\W}\[\e[91m\]@\$(parse_git_branch)$(tput sgr0)-->";
 export PS1;
 
 # Welcome screen:
