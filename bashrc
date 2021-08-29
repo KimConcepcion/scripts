@@ -3,7 +3,7 @@
 # public domain worldwide. This software is distributed without any warranty. 
 # You should have received a copy of the CC0 Public Domain Dedication along 
 # with this software. 
-# If not, see <https://creativecommons.org/publicdomain/zero/1.0/>. 
+# If not, see <http://creativecommons.org/publicdomain/zero/1.0/>. 
 
 # /etc/bash.bashrc: executed by bash(1) for interactive shells.
 
@@ -15,48 +15,8 @@
 # If not running interactively, don't do anything
 [[ "$-" != *i* ]] && return
 
-# If started from sshd, make sure profile is sourced
-if [[ -n "$SSH_CONNECTION" ]] && [[ "$PATH" != *:/usr/bin* ]]; then
-    source /etc/profile
-fi
-
-# Warnings
-unset _warning_found
-for _warning_prefix in '' ${MINGW_PREFIX}; do
-    for _warning_file in ${_warning_prefix}/etc/profile.d/*.warning{.once,}; do
-        test -f "${_warning_file}" || continue
-        _warning="$(command sed 's/^/\t\t/' "${_warning_file}" 2>/dev/null)"
-        if test -n "${_warning}"; then
-            if test -z "${_warning_found}"; then
-                _warning_found='true'
-                echo
-            fi
-            if test -t 1
-                then printf "\t\e[1;33mwarning:\e[0m\n${_warning}\n\n"
-                else printf "\twarning:\n${_warning}\n\n"
-            fi
-        fi
-        [[ "${_warning_file}" = *.once ]] && rm -f "${_warning_file}"
-    done
-done
-unset _warning_found
-unset _warning_prefix
-unset _warning_file
-unset _warning
-
-# If MSYS2_PS1 is set, use that as default PS1;
-# if a PS1 is already set and exported, use that;
-# otherwise set a default prompt
-# of user@host, MSYSTEM variable, and current_directory
-[[ -n "${MSYS2_PS1}" ]] && export PS1="${MSYS2_PS1}"
-# if we have the "High Mandatory Level" group, it means we're elevated
-#if [[ -n "$(command -v getent)" ]] && id -G | grep -q "$(getent -w group 'S-1-16-12288' | cut -d: -f2)"
-#  then _ps1_symbol='\[\e[1m\]#\[\e[0m\]'
-#  else _ps1_symbol='\$'
-#fi
-[[ $(declare -p PS1 2>/dev/null | cut -c 1-11) = 'declare -x ' ]] || \
-  export PS1='\[\e]0;\w\a\]\n\[\e[32m\]\u@\h \[\e[35m\]$MSYSTEM\[\e[0m\] \[\e[33m\]\w\[\e[0m\]\n'"${_ps1_symbol}"' '
-unset _ps1_symbol
+# Set a default prompt of: user@host, MSYSTEM variable, and current_directory
+#PS1='\[\e]0;\w\a\]\n\[\e[32m\]\u@\h \[\e[35m\]$MSYSTEM\[\e[0m\] \[\e[33m\]\w\[\e[0m\]\n\$ '
 
 # Uncomment to use the terminal colours set in DIR_COLORS
 eval "$(dircolors -b /etc/DIR_COLORS)"
@@ -64,10 +24,16 @@ eval "$(dircolors -b /etc/DIR_COLORS)"
 # Fixup git-bash in non login env
 shopt -q login_shell || . /etc/profile.d/git-prompt.sh
 
+# Alias
+alias ls='ls $LS_OPTIONS'
+alias ll='ls $LS_OPTIONS -l'
+alias l='ls $LS_OPTIONS -lA'
+alias bbbConnect='ssh root@beagle'
+alias python='winpty python.exe'
+
 #-------------------------------------------------------------------------------------------------#
 # MY STUFF
 #-------------------------------------------------------------------------------------------------#
-cd
 
 # Print Git branch beside directory name
 parse_git_branch() 
@@ -75,23 +41,23 @@ parse_git_branch()
   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
 
-# User prompt:
-PS1="$(tput bold)$(tput setaf 7)\u@$(tput setaf 6)[\W]\[\e[91m\]@\$(parse_git_branch)$(tput sgr0)-->";
+# User prompt \u + \w
+PS1="$(tput bold)$(tput setaf 7)\u@$(tput setaf 6){\W}\[\e[91m\]@\$(tput setaf 1)$(parse_git_branch)$(tput sgr0)-->";
 export PS1;
 
 # Welcome screen:
 echo '========================================================================'
-echo '     .---.     '
-echo '    /     \    '
-echo '    \.@-@./    '
-echo '    /`\_/`\    '
-echo '   //  _  \\   '
-echo '  | \     )|_  '
-echo ' /`\_`>  <_/ \ '
-echo ' \__/'-----'\__/ '
+echo '#                               .---.                                  #'
+echo '#                              /     \                                 #'
+echo '#                              \.@-@./                                 #'
+echo '#                              /`\_/`\                                 #'
+echo '#                             //  _  \\                                #'
+echo '#                            | \     )|_                               #'
+echo '#                           /`\_`>  <_/ \                              #'
+echo '#                           \__/'-----'\__/                              #'
 echo '========================================================================'
-echo 'Date: '$(date)
-echo 'Git user: '$(git config user.name)
-echo 'Git email: '$(git config user.email)
+printf '# Date: %s                                          #\n' "$(date)"                        
+printf '# Git user:  %s                                               #\n' "$(git config user.name)"    
+printf '# Git email: %s                                 #\n' "$(git config user.email)" 
+echo '========================================================================'
 echo 'Welcome back sir!'
-echo '========================================================================'
