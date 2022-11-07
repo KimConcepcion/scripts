@@ -6,11 +6,11 @@ from time import sleep
 import logging
 
 # folders to track
-downloads_dir      = "C://Users//Kim//Downloads"
-dest_dir_audio     = "D://Music"
-dest_dir_video     = "D://Videoer"
-dest_dir_image     = "D://Billeder"
-dest_dir_document  = "D://Dokumenter"
+downloads_dir      = "" # e.g. "C://Users//Kim//Downloads"
+dest_dir_audio     = ""
+dest_dir_video     = ""
+dest_dir_image     = ""
+dest_dir_document  = ""
 
 # ? supported image types
 image_extensions = [".jpg", ".jpeg", ".jpe", ".jif", ".jfif", ".jfi", ".png", ".gif", ".webp", ".tiff", ".tif", ".psd", ".raw", ".arw", ".cr2", ".nrw",
